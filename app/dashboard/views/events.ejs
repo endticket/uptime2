@@ -1,10 +1,10 @@
 <script src="/dashboard/javascripts/ejs.min.js"></script>
-<h1>
+<!--<h1>
   Latest events
 </h1>
 <div id="events">
   <%- partial('_events', { url: '/api/pings/events', route: '/dashboard' }) %>
-</div>
+</div>-->
 <div id="welcome" style="display: none">
 <p>Welcome to Uptime, the web monitoring application.</p>
 <p>To begin, <a href="/dashboard/checks/new">create your first check</a>.</p>
@@ -21,3 +21,15 @@ $(document).ready(function() {
   });
 });
 </script>
+<div class="row">
+  <div class="col-md-12">
+    <div class="portlet box green">
+      <div class="portlet-title">
+        <div class="caption">
+          Latest events
+        </div>
+      </div>
+      <%- partial('_events', { url: '/api/pings/events', route: '/dashboard' }) %>
+    </div>
+  </div>
+</div>

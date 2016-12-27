@@ -3,7 +3,8 @@ var config     = require('config');
 var semver     = require('semver');
 
 // configure mongodb
-mongoose.connect(config.mongodb.connectionString || 'mongodb://' + config.mongodb.user + ':' + config.mongodb.password + '@' + config.mongodb.server +'/' + config.mongodb.database);
+// console.log('mongodb://' + config.mongodb.server +':27017/' + config.mongodb.database);
+mongoose.connect(config.mongodb.connectionString || 'mongodb://' + config.mongodb.server +':27017/' + config.mongodb.database);
 mongoose.connection.on('error', function (err) {
   console.error('MongoDB error: ' + err.message);
   console.error('Make sure a mongoDB server is running and accessible by this application');

@@ -1,11 +1,16 @@
-<div id="checkEvents"></div>
+      <div class="portlet-body flip-scroll" id="checkEvents">
+      </div>
+
 <script id="event_template" type="text/template">
-<li class="{{= highlightFrom && date.valueOf() > highlightFrom ? 'new' : ''}}">
-  <span class="label" title="{{= date }}">{{= date.format('LT') }}</span>
-  {{ var label = (event.message == 'paused' || event.message == 'restarted') ? 'info' : (event.message == 'up') ? 'success' : 'important' }}
-  <span class="label label-{{= label }}">{{= event.message }}</span>
-  <a href="{{=  '/dashboard/checks/' + event.check._id }}">{{= event.check.name }}</a>
-  <a href="{{= event.check.url }}" target="_blank"><img src="/dashboard/images/external-link-ltr-icon.png"></a>
+<tr class="{{= highlightFrom && date.valueOf() > highlightFrom ? 'warning' : ''}}">
+            <td><span class="label bg-default bg-font-default" title="{{= date }}">{{= date.format('LT') }}</span></td>
+            <td>
+              {{ var label = (event.message == 'paused' || event.message == 'restarted') ? 'bg-blue bg-font-blue' : (event.message == 'up') ? 'bg-green-jungle bg-font-green-jungle' : 'bg-red-mint bg-font-red-mint' }}
+              <span class="label {{= label }}">{{= event.message }}</span>
+            </td>
+            <td>
+              <a href="{{=  '/dashboard/checks/' + event.check._id }}">{{= event.check.name }}</a>
+              <a href="{{= event.check.url }}" target="_blank"><img src="/dashboard/images/external-link-ltr-icon.png"></a>
   {{ switch (event.message) { // cannot close ejs tag here or compilation fails, sorry
        case 'paused': }}
     {{ case 'restarted': }}
@@ -24,7 +29,8 @@
     {{ default: }}
       unnown event
   {{ } }}
-</li>
+            </td>
+</tr>
 </script>
 <script>
 $(document).ready(function() {
@@ -53,13 +59,22 @@ $(document).ready(function() {
       var lines = [];
       var nbEvents = 0;
       $.each(events, function(key, eventGroup) {
-        lines.push('<ul><li class="day"><h3>' + moment(key).format('dddd, MMMM Do') + '</h3><ul>');
+        lines.push('<h3>' + moment(key).format('dddd, MMMM Do') + '</h3>');
+        lines.push(`<table class="table table-bordered table-striped table-condensed flip-content">
+          <thead class="flip-content">
+            <tr>
+              <th width="10%">Time</th>
+              <th width="10%">Status</th>
+              <th>URL</th>
+            </tr>
+          </thead>
+          <tbody>`);
         $.each(eventGroup, function(key, event) {
           if (!event.message) return;
           lines.push(ejs.render(event_template, { event: event, date: moment(event.timestamp), highlightFrom: highlightFrom, route: '/dashboard/' }));
           nbEvents++;
         });
-        lines.push('</ul></li></ul>');
+        lines.push(`</tbody></table>`);
       });
       if (nbEvents == 100) {
         lines.push('<p>List limited to first 100 events - dig down to see all events</p>')
