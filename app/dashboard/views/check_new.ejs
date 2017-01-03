@@ -1,10 +1,16 @@
-<h1>Create a new check</h1>
-<% if (info.length) { %>
-<div class="alert alert-success"><%= info %></div>
-<% } %>
-<%- partial('_check_details', { check: check, pollerCollection: pollerCollection, pollerDetails: '', route: '/dashboard' }) %>
+<div class="portlet box green">
+  <div class="portlet-title">
+    <div class="caption">Create a new check</div>
+  </div>
+  <div class="portlet-body form">
+    <% if (info.length) { %>
+    <div class="alert alert-success"><%= info %></div>
+    <% } %>
+    <%- partial('_check_details', { check: check, pollerCollection: pollerCollection, pollerDetails: '', route: '/dashboard' }) %>
+  </div>
+</div>
 <script>
 jQuery(document).ready(function($) {
-  $('.navbar-inner li').eq(1).addClass('active');
+  $('.sub-menu li').eq(1).addClass('active');
 });
 </script>

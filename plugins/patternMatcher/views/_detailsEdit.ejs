@@ -1,8 +1,7 @@
-<fieldset>
-  <div class="control-group">
-    <label class="control-label">Pattern to match</label>
-    <div class="controls">
-      <input type="text" name="check[match]" value="<%= check.getPollerParam('match') || '' %>" class="span8" placeholder="Uses regular expressions. Leave blank to disable pattern detection."/>
+<div class="form-group form-md-line-input">
+	<label class="col-md-2 control-label" for="form_control_pattern_to_match">Pattern to match</label>
+	<div class="col-md-6">
+		<input type="text" name="check[match]" value="<%= check.getPollerParam('match') || '' %>" class="form-control" id="form_control_pattern_to_match" placeholder="Uses regular expressions. Leave blank to disable pattern detection.">
+       	<div class="form-control-focus"> </div>
     </div>
-  </div>
-</fieldset>
+</div>

@@ -1,18 +1,27 @@
 <script src="/dashboard/javascripts/checkState.js"></script>
-<div style="float: right;">
-  <span id="check_24h"></span>
+
+
+<div class="portlet box green">
+  <div class="portlet-title">
+    <div class="caption"> 
+      Edit check "<%= check.name %>"
+    </div>
+  </div>
+  <div class="portlet-body form">
+    <% if (info.length) { %>
+    <div class="alert alert-success"><%= info %></div>
+    <% } %>
+    <div style="float: right;">
+      <span id="check_24h"></span>
+    </div>
+    <%- partial('_check_details', { check: check, pollerCollection: pollerCollection, pollerDetails: pollerDetails, route: '/dashboard' }) %>
+  </div>
 </div>
-<h1>Edit check "<%= check.name %>"</h1>
-<% if (info.length) { %>
-<div class="alert alert-success"><%= info %></div>
-<% } %>
-<%- partial('_check_details', { check: check, pollerCollection: pollerCollection, pollerDetails: pollerDetails, route: '/dashboard' }) %>
-<div>
-</div>
+
 <script>
 jQuery(document).ready(function($) {
   // highlight current section in main nav
-  $('.navbar-inner li').eq(1).addClass('active');
+  $('.sub-menu li').eq(1).addClass('active');
 
   // update check state live
   updateCheckState(<%- JSON.stringify(check) %>);
@@ -21,7 +30,7 @@ jQuery(document).ready(function($) {
   });
   
   // manage pause
-  $('a[name="pause"]').click(function(e) {
+  $('button[name="pause"]').click(function(e) {
     var button = $(this).children();
     $.getJSON('/api/checks/<%= check._id %>/pause', function() {
       if(button.hasClass('icon-pause')) {

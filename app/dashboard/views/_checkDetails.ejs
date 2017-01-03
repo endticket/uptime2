@@ -1,116 +1,106 @@
 <% addedCss.push('jquery.tagsinput.css') %>
-<div class="tab-pane" id="admin">
-  <form id="check_form" method="<%= (check.isNew) ? 'post' : 'put' %>" class="form-horizontal" action="/dashboard/checks<%= check.isNew ? '' : '/' + check._id %>">
-
-    <div class="row">
-
-      <div class="span6">
-        <fieldset>
-          <div class="control-group">
-            <label class="control-label">Url</label>
-            <div class="controls controls-row">
-              <input type="text" required name="check[url]" value="<%= check.url || '' %>" class="span5"  placeholder="http://www.example.com"/>
-              <span class="help-inline" style="position:absolute"><a href="<%= check.url %>" target="_blank"><img src="/dashboard/images/external-link-ltr-icon.png"></a></span>
-            </div>
+<form id="check_form" role="form" class="form-horizontal" method="<%= (check.isNew) ? 'post' : 'put' %>" action="/dashboard/checks<%= check.isNew ? '' : '/' + check._id %>">
+  <div class="form-body">
+    <div class="form-group form-md-line-input">
+      <label class="col-md-2 control-label" for="form_control_url">Url</label>
+      <div class="col-md-10">
+        <div class="input-group input-group-sm">
+          <div class="input-group-control">
+            <input type="text" required name="check[url]" value="<%= check.url || '' %>" class="form-control input-sm" id="form_control_url" placeholder="http://www.example.com"/>
+            <div class="form-control-focus"> </div>
           </div>
-        </fieldset>
-      </div>
-
-      <div class="span6">
-        <fieldset>
-          <div class="control-group">
-            <label class="control-label">Type</label>
-            <div class="controls controls-row">
-              <select name="check[type]" value="<% check.type || '' %>" class="span2">
-                <option value="">auto</option>
-                <% pollerCollection.getTypes().forEach(function(poller) { %>
-                <option value="<%= poller %>" <% if (poller === check.type) { %> selected="true" <% } %>><%= poller %></option>
-                <% }) %>
-              </select>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-    </div>
-
-    <fieldset>
-      <div class="control-group">
-        <label class="control-label">Name</label>
-        <div class="controls">
-          <input type="text" name="check[name]" value="<%= check.name || '' %>" class="span8" placeholder="Type a name here"/>
+          <span class="input-group-btn btn-right">
+            <a href="<%= check.url %>" target="_blank" class="green-haze"><img src="/dashboard/images/external-link-ltr-icon.png"></a>
+          </span>
         </div>
       </div>
-    </fieldset>
-
-    <div class="row">
-
-      <div class="span6">
-        <fieldset>
-          <div class="control-group">
-            <label class="control-label">Polling interval</label>
-            <div class="controls">
-              <div class="input-prepend input-append">
-                <% if (check.lastTested) { %>
-                <a class="btn" name="pause"><i class="icon-<%= check.isPaused ? 'play' : 'pause' %>"></i></a>
-                <% } %>
-                <input type="text" name="check[interval]" value="<%= (check.interval / 1000).toFixed() %>" class="span2" />
-                <span class="add-on">s</span>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-      <div class="span6">
-        <fieldset>
-          <div class="control-group">
-            <label class="control-label">Slow threshold</label>
-            <div class="controls">
-              <div class="input-append">
-                <input type="text" name="check[maxTime]" value="<%= check.maxTime %>" class="span1" />
-                <span class="add-on">ms</span>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
     </div>
 
+    <div class="form-group form-md-line-input">
+      <label class="col-md-2 control-label" for="form_control_type">Type</label>
+      <div class="col-md-2">
+        <select name="check[type]" value="<% check.type || '' %>" class="form-control" id="form_control_type">
+          <option value="">auto</option>
+          <% pollerCollection.getTypes().forEach(function(poller) { %>
+          <option value="<%= poller %>" <% if (poller === check.type) { %> selected="true" <% } %>><%= poller %></option> 
+          <% }) %>
+        </select>
+        <div class="form-control-focus"> </div>
+      </div>
+    </div>
 
-    <fieldset>
-      <div class="control-group">
-        <label class="control-label">Alert threshold</label>
-        <div class="controls">
-          <div class="input-append">
-            <input type="text" name="check[alertTreshold]" value="<%= check.alertTreshold %>" class="span1" />
-            <span class="add-on">failed pings</span>
-          </div>
+    <div class="form-group form-md-line-input">
+      <label class="col-md-2 control-label" for="form_control_name">Name</label>
+      <div class="col-md-10">
+        <input type="text" name="check[name]" value="<%= check.name || '' %>" class="form-control" id="form_control_name" placeholder="Type a name here">
+        <div class="form-control-focus"> </div>
+      </div>
+    </div>
+
+    <div class="form-group form-md-line-input">
+      <label class="col-md-2 control-label" for="form_control_polling_interval">Polling interval</label>
+      <div class="col-md-6">
+        <div class="input-group">
+          <% if (check.lastTested) { %>
+          <span class="input-group-btn btn-left">
+            <button class="btn" name="pause" type="button"><i class="fa fa-<%= check.isPaused ? 'play' : 'pause' %>"></i></button>
+          </span>
+          <% } %>
+          <input type="text" name="check[interval]" value="<%= (check.interval / 1000).toFixed() %>" class="form-control" id="form_control_polling_interval"/>
+          <div class="form-control-focus"></div>
+          <span class="input-group-addon">s</span>
         </div>
       </div>
-    </fieldset>
+    </div>
+
+    <div class="form-group form-md-line-input">
+      <label class="col-md-2 control-label" for="form_control_slow_threshold">Slow threshold</label>
+      <div class="col-md-6">
+        <div class="input-group">
+          <input type="text" name="check[maxTime]" value="<%= check.maxTime %>" class="form-control input-sm" id="form_control_slow_threshold"/>
+          <div class="form-control-focus"></div>
+          <span class="input-group-addon">ms</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group form-md-line-input">
+      <span class="col-md-2 control-label" for="form_control_alert_threshold">Alert threshold</span>
+      <div class="col-md-6">
+        <div class="input-group">
+          <input type="text" name="check[alertTreshold]" vale="<%= check.alertTreshold %>" class="form-control input-sm" id="form_control_alert_threshold"/>
+          <div class="form-control-focus"></div>
+          <span class="input-group-addon">failed pings</span>
+        </div>
+      </div>
+    </div>
 
     <span id="pollerDetails">
-    <%- pollerDetails %>
+      <%- pollerDetails %>
     </span>
 
-    <fieldset>
-      <div class="control-group">
-        <label class="control-label">Tags</label>
-        <div class="controls">
-          <textarea name="check[tags]" rows="2"/><%= check.tags.join(', ') %></textarea>
-        </div>
+    <div class="form-group form-md-line-input">
+      <label class="col-md-2 control-label">Tags</label>
+      <div class="col-md-10">
+        <textarea name="check[tags]" class="form-control" rows="2"><%= check.tags.join(', ') %></textarea>
+        <div class="form-control-focus"></div>
       </div>
-      <% if (check.lastTested) { %>
-      <div class="control-group">
-        <label class="control-label">Last edited on</label>
-        <div class="controls">
-          <span class="span4 uneditable-input"><%= check.lastTested.getTime() %></span>
-        </div>
+    </div>
+
+    <% if (check.lastTested) { %>
+    <div class="form-group form-md-line-input">
+      <label class="col-md-2 control-label" for="form_control_last_edited">Last edited on</label>
+      <div class="col-md-2">
+        <div class="form-control form-control-static" id="form_control_last_edited"><%= check.lastTested.getTime() %></div>
+        <div class="form-control-focus"></div>
       </div>
-      <% } %>
-      <div class="form-actions">
+    </div>
+    <% } %>
+
+  </div>
+  <div class="form-actions" style="background-color: white">
+    <div class="row">
+      <div class="col-md-offset-2 col-md-10">
         <% if (check.isNew) { %>
         <button type="submit" class="btn btn-primary">Save</button>
         <button type="submit" name="saveandadd" value="true" class="btn btn-primary">Save and add</button>
@@ -121,12 +111,14 @@
         <button type="submit" class="btn btn-danger pull-right" name="delete">Delete</button>
         <% } %>
       </div>
-    </fieldset>
-  </form>
-</div>
-<script src="/dashboard/javascripts/jquery.tagsinput.min.js"></script>
+    </div>
+    
+  </div>
+</form>
+
+<!-- <script src="/dashboard/javascripts/jquery.tagsinput.min.js"></script> -->
 <script>
-var intervalFieldSelector = 'form input[name="check\\[interval\\]"]';
+var intervalFieldSelector = '#check_form input[name="check\\[interval\\]"]';
 function updatePollingIntervalTooltip() {
   var value = $(intervalFieldSelector).val();
   if (value > 60 ) {
@@ -138,7 +130,7 @@ function updatePollingIntervalTooltip() {
   }
 }
 $(document).ready(function() {
-  $('.uneditable-input').text(moment(parseInt($('.uneditable-input').html())).format('LLLL'));
+  $('#form_control_last_edited').text(moment(parseInt($('#form_control_last_edited').html())).format('LLLL'));
   $('#check_form button[name="delete"]').click(function() {
     if (!confirm("This will delete the check and related pings and stats.\nAre you sure?")) return false;
     $('#check_form input[name="_method"]').val('delete');
@@ -154,17 +146,19 @@ $(document).ready(function() {
     }
   });
 
-  $('form select[name="check\\[type\\]"]').bind('change', function() {
+  $('#check_form select[name="check\\[type\\]"]').bind('change', function() {
     var pollerDetails = $('#pollerDetails');
     $.get('/dashboard/pollerPartial/' + $(this).val())
       .fail(function() { pollerDetails.html(''); })
-      .done(function(html) { pollerDetails.html(html); });
+      .done(function(html) { 
+        pollerDetails.html(html); 
+      });
   });
 
   var tagField = $('#check_form textarea[name="check[tags]"]');
   var tags = tagField.val().split(', ');
   tagField.tagsInput();
-  $('.tagsinput span.tag span').live('click', function() {
+  $('.tagsinput span.tag span').on('click', function() {
     window.location = '/dashboard/tags/' + $(this).text();
   });
 });

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>Uptime</title>
+    <link rel="stylesheet" href="/dashboard/stylesheets/bootstrap.css">
+    <link rel="stylesheet" href="/dashboard/stylesheets/style.css">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="/dashboard/favicon.ico">
+    <link rel="apple-touch-icon" href="/dashboard/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/dashboard/apple-touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/dashboard/apple-touch-icon-iphone4.png">
+    <%- renderCssTags(addedCss) %>
+    <script src="/dashboard/javascripts/jquery.min.js"></script>
+    <script src="/dashboard/javascripts/socket.io.js"></script>
+    <script>
+    var socket = io.connect(location.protocol + '//' + location.hostname);
+    </script>
+    <script src="/dashboard/javascripts/moment.min.js"></script>
+    <!--[if lt IE 9]>
+    <script src="/dashboard/javascripts/plugins/respond.min.js"></script>
+    <script src="/dashboard/javascripts/plugins/excanvas.min.js"></script> 
+    <script src="/dashboard/javascripts/plugins/ie8.fix.min.js"></script> 
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+      <div class="navbar navbar-inverse">
+        <div class="navbar-inner">
+          <div class="container">
+            <a class="brand" href="/dashboard/events">Uptime</a>
+            <ul class="nav pull-left">
+              <li><a href="/dashboard/events">Events</a></li>
+              <li><a href="/dashboard/checks">Checks</a></li>
+              <li><a href="/dashboard/tags">Tags</a></li>
+              <li id="new_events"><a href="/dashboard/events?highlightFrom=<%= Date.now() %>"></a></li>
+            </ul>
+            <ul class="nav pull-right" id="check_summary">
+              <li id="all_up" style="display:none;"><span class="label label-success">Up</span><strong class="green">0</strong></li>
+              <li id="all_down" style="display: none;"><span class="label label-important">Down</span><strong class="red">0</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <section>
+        <%- body %>
+      </section>
+      <footer class="footer">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p><a href="https://github.com/endticket/uptime2">Uptime <%= version %></a>, powered by <a href="http://nodejs.org/">Node.js</a>, <a href="http://www.mongodb.org/">MongoDB</a>, and <a href="http://twitter.github.com/bootstrap/">Bootstrap</a>.</p>
+        <p>Code licensed under the <a href="https://raw.github.com/fzaninotto/uptime/master/LICENSE">MIT License</a>. Check the <a href="https://github.com/fzaninotto/uptime">Uptime GitHub repository</a> regularly for updates.
+      </footer>
+    </div>
+    <script>
+    var nbNewEvents = 0;
+    var loadedAt = new Date();
+    $(document).ready(function() {
+      var changeFavicon = function(red) {
+        $('head link[rel="shortcut icon"]').remove()
+        $('head').append('<link rel="shortcut icon" type="image/x-icon" href="/dashboard/favicon' + (red ? '_red' : '') + '.ico">')
+      }
+      var updateCounts = function() {
+        $.getJSON('/api/checks/count', function(count) {
+          if (count.total > 0) {
+            $('#all_up').show().children('strong').text(count.up);
+          } else {
+            $('#all_up').hide();
+          }
+          if (count.down > 0) {
+            $('#all_down').show().children('strong').text(count.down);
+            changeFavicon(true);
+          } else {
+            $('#all_down').hide();
+            if (nbNewEvents > 0) {
+              changeFavicon(false);
+            }
+          }
+          if (nbNewEvents > 0) {
+            document.title = '(' + nbNewEvents +') Uptime';
+          };
+        });
+      };
+      socket.on('CheckEvent', function() {
+        nbNewEvents++;
+        updateCounts();
+        $('#check_summary').fadeOut().fadeIn().fadeOut().fadeIn();
+        $('#new_events a').html(nbNewEvents + ' new event' + (nbNewEvents > 1 ? 's' : '') + ' since ' + moment(loadedAt).format('LLL'));
+      });
+      updateCounts();
+    });
+    </script>
+    <!-- BEGIN CORE PLUGINS -->
+    <script src="/dashboard/javascripts/plugins/jquery.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/bootstrap/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/js.cookie.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/bootstrap-switch/bootstrap-switch.min.js" type="text/javascript"></script>
+    <!-- END CORE PLUGINS -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="/dashboard/javascripts/plugins/moment.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/morris/morris.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/morris/raphael-min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/counterup/jquery.waypoints.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/counterup/jquery.counterup.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/amcharts/amcharts/amcharts.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/amcharts/amcharts/serial.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/amcharts/amcharts/pie.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/amcharts/amcharts/radar.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/amcharts/amcharts/themes/light.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/amcharts/amcharts/themes/patterns.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/amcharts/amcharts/themes/chalk.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/amcharts/ammap/ammap.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/amcharts/ammap/maps/js/worldLow.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/amcharts/amstockcharts/amstock.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/fullcalendar/fullcalendar.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/horizontal-timeline/horizontal-timeline.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/flot/jquery.flot.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/flot/jquery.flot.resize.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/flot/jquery.flot.categories.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jquery-easypiechart/jquery.easypiechart.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jquery.sparkline.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jqvmap/jqvmap/jquery.vmap.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jqvmap/jqvmap/maps/jquery.vmap.russia.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jqvmap/jqvmap/maps/jquery.vmap.world.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jqvmap/jqvmap/maps/jquery.vmap.europe.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jqvmap/jqvmap/maps/jquery.vmap.germany.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jqvmap/jqvmap/maps/jquery.vmap.usa.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/plugins/jqvmap/jqvmap/data/jquery.vmap.sampledata.js" type="text/javascript"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL SCRIPTS -->
+    <script src="/dashboard/javascripts/app.min.js" type="text/javascript"></script>
+    <!-- END THEME GLOBAL SCRIPTS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/dashboard/javascripts/dashboard.min.js" type="text/javascript"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <!-- BEGIN THEME LAYOUT SCRIPTS -->
+    <script src="../assets/layouts/layout6/scripts/layout.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/layout.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/quick-sidebar.min.js" type="text/javascript"></script>
+    <script src="/dashboard/javascripts/quick-nav.min.js" type="text/javascript"></script>
+    <!-- END THEME LAYOUT SCRIPTS -->
+  </body>
+</html>
